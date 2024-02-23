@@ -14,7 +14,9 @@ import { setConfig, frappeRequest, resourcesPlugin,
     FormControl,
     FeatherIcon,
     Select,
-    Dropdown
+    Dropdown,
+    Dialog,
+    Autocomplete,
 } from 'frappe-ui'
 
 const pinia = createPinia();
@@ -34,4 +36,6 @@ app.component('FormControl', FormControl)
 app.component('FeatherIcon', FeatherIcon)
 app.component('Select', Select)
 app.component('Dropdown', Dropdown)
+app.component('Dialog', Dialog)
+app.component('Autocomplete', Autocomplete)
 app.mount("#app");

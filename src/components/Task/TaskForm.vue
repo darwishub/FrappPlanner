@@ -6,6 +6,57 @@
                 <div class="flex justify-start items-center">
                     <Avatar :shape="'circle'" :image="avatar" label="EY" size="md" v-for="(avatar, index) in avatars"
                         :key="index" />
+                    <Button :variant="'subtle'" theme="gray" size="sm" label="Button" :loading="false" :loadingText="null"
+                        :disabled="false" :link="null" icon="user-plus" class="rounded-full" type="button"
+                        @click="addAssigneePopup = true">
+                    </Button>
+                    <Dialog v-model="addAssigneePopup">
+                        <template #body-title>
+                            <p class="text-base">Assigned to</p>
+                        </template>
+                        <template #body-content>
+                            <Autocomplete :options="[
+                                {
+                                    label: 'Muhammad Darwis Arifin',
+                                    value: 'Muhammad-Darwis-Arifin',
+                                    image: 'https://i.pravatar.cc/400?img=70',
+                                },
+                                {
+                                    label: 'Christoph Diethelm',
+                                    value: 'Christoph-Diethelm',
+                                    image: 'https://i.pravatar.cc/400?img=69',
+                                },
+                                {
+                                    label: 'John Smith',
+                                    value: 'john-smith',
+                                    image: 'https://randomuser.me/api/portraits/men/59.jpg',
+                                },
+                                {
+                                    label: 'Jane Smith',
+                                    value: 'jane-smith',
+                                    image: 'https://randomuser.me/api/portraits/women/59.jpg',
+                                },
+                                {
+                                    label: 'John Wayne',
+                                    value: 'john-wayne',
+                                    image: 'https://randomuser.me/api/portraits/men/57.jpg',
+                                },
+                                {
+                                    label: 'Jane Wayne',
+                                    value: 'jane-wayne',
+                                    image: 'https://randomuser.me/api/portraits/women/51.jpg',
+                                },
+                            ]" v-model="people" placeholder="Select people" :multiple="true" />
+                        </template>
+                        <template #actions>
+                            <Button variant="solid">
+                                Add
+                            </Button>
+                            <Button class="ml-2" @click="addAssigneePopup = false">
+                                Close
+                            </Button>
+                        </template>
+                    </Dialog>
                 </div>
             </div>
             <FormControl :type="'text'" size="sm" variant="subtle" placeholder="Subject" :disabled="false" label="Subject"
@@ -83,12 +134,13 @@
 <script setup>
 import { ref } from "vue";
 
+const addAssigneePopup = ref(false);
 let avatars = [
     "https://i.pravatar.cc/400?img=69",
     "https://i.pravatar.cc/400?img=70",
     "https://i.pravatar.cc/400?img=68"
 ];
-
+let people = ref([]);
 let name = ref();
 let status = ref();
 let priority = ref();
