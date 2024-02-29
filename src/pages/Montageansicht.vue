@@ -15,9 +15,9 @@
             <div class="flex flex-col lg:flex-row justify-between items-start gap-6">
                 <div class="w-full lg:w-9/12">
                     <div class="bg-white rounded p-2">
-                        <div>
-                            <div ref="timeline"></div>
-                        </div>
+
+                        <div ref="timeline"></div>
+
                     </div>
                 </div>
                 <div class="w-full lg:w-3/12">
@@ -25,14 +25,15 @@
                         <template v-if="!isTaskFormActive">
                             <p class="text-lg mb-3">Backlog</p>
                             <div class="grid grid-rows gap-3 mb-3">
-                                <div class="flex flex-col bg-gray-300 p-3 rounded gap-2 cursor-pointer select-none"
-                                    @click="openTaskDetail">
+                                <div class="flex flex-col bg-gray-300 p-3 rounded gap-2 cursor-grab select-none"
+                                    v-for="task in backLog" :key="task.id" @click="openTaskDetail" draggable="true"
+                                    @dragstart="dragBackLog($event, task)">
                                     <div class="flex justify-between items-center">
-                                        <p class="text-sm">P-ANL-20222024-01-Montage</p>
-                                        <p class="text-xs">6 Tage</p>
+                                        <p class="text-sm">{{ task.title }}</p>
+                                        <p class="text-xs">{{ task.duration }}</p>
                                     </div>
                                     <div class="flex justify-start items-center">
-                                        <p class="text-sm font-semibold">Hofnerstrasse 4, Haus B, 8888 Unterageri</p>
+                                        <p class="text-sm font-semibold">{{ task.address }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -91,8 +92,8 @@ const employees = ref([
                 title: "P-ANL-20222024-01-Montage",
                 duration: "6 Tage",
                 address: "Hofnerstrasse 4, Haus B, 8888 Unterageri",
-                startDate: "2024-02-21",
-                endDate: "2024-02-22",
+                startDate: "2024-02-27",
+                endDate: "2024-02-29",
             },
         ],
     },
@@ -112,15 +113,15 @@ const employees = ref([
                 title: "P-ANL-20222024-01-Montage",
                 duration: "6 Tage",
                 address: "Hofnerstrasse 4, Haus B, 8888 Unterageri",
-                startDate: "2024-02-20",
-                endDate: "2024-02-23",
+                startDate: "2024-02-28",
+                endDate: "2024-03-01",
             },
             {
                 id: '1-ft6667b',
                 title: "P-ANL-20222024-01-Montage",
                 duration: "6 Tage",
                 address: "Hofnerstrasse 4, Haus B, 8888 Unterageri",
-                startDate: "2024-02-25",
+                startDate: "2024-02-26",
                 endDate: "2024-02-29",
             },
         ],
@@ -142,8 +143,8 @@ const employees = ref([
                 title: "P-ANL-20222024-01-Montage",
                 duration: "6 Tage",
                 address: "Hofnerstrasse 4, Haus B, 8888 Unterageri",
-                startDate: "2024-02-23",
-                endDate: "2024-02-25",
+                startDate: "2024-02-28",
+                endDate: "2024-02-29",
             },
         ],
     },
@@ -185,8 +186,42 @@ const employees = ref([
     },
 ]);
 
+const backLog = ref([
+    {
+        id: '1ddffffff-a',
+        title: "P-ANL-20222024-01-Montage",
+        duration: "6 Tage",
+        address: "Hofnerstrasse 4, Haus B, 8888 Unterageri",
+    },
+]);
+
 const openTaskDetail = () => {
     isTaskFormActive.value = true;
+};
+
+const dragEndBackLog = () => {}
+
+const dragBackLog = (event, task) => {
+
+    event.dataTransfer.effectAllowed = 'move';
+    let item = {
+        id: new Date(),
+        type: 'range',
+        content: task
+    };
+
+    event.target.id = new Date(item.id).toISOString();
+
+    let startDateTime = new Date(currentDate.value);
+    startDateTime.setHours(0, 0, 0, 0);
+    item.content.startDate = startDateTime.toLocaleDateString('en-CA'); 
+
+    let endDateTime = new Date(currentDate.value.setDate(currentDate.value.getDate() + 1));
+    endDateTime.setHours(0, 0, 0, 0);
+    item.content.endDate = endDateTime.toLocaleDateString('en-CA'); 
+
+    event.dataTransfer.setData('text', JSON.stringify(item));
+    event.target.addEventListener('dragend', dragEndBackLog.bind(this), false);
 };
 
 const backToBackLog = () => {
@@ -237,7 +272,6 @@ const initTimeLine = () => {
     endOfWeek.setDate(endOfWeek.getDate() + 6);
     endOfWeek.setHours(23, 59, 59, 999);
 
-    // specify options
     var options = {
         stack: true,
         start: startOfWeek,
@@ -246,6 +280,7 @@ const initTimeLine = () => {
         editable: true,
         orientation: 'top',
         horizontalScroll: true,
+        showWeekScale: true,
         itemsAlwaysDraggable: {
             item: true,
             range: true
@@ -268,10 +303,6 @@ const initTimeLine = () => {
             date.setMilliseconds(0);
             return date;
         },
-        onDropObjectOnItem: function (objectData, item, callback) {
-            if (!item) { return; }
-            alert('dropped object with content: "' + objectData.content + '" to item: "' + item.content + '"');
-        }
     };
 
     // create a Timeline

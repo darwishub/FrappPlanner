@@ -35,11 +35,11 @@ body {
     background-color: #E2E2E2 !important;
     user-select: none;
     border: none !important;
-    cursor: grab;
+    cursor: move;
     position: relative;
 }
 .vis-editable.vis-selected, .vis-item .vis-drag-center {
-    cursor: grab !important;
+    cursor: move !important;
 }
 .vis-item .vis-delete {
     display: none !important;
